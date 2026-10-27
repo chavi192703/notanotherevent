@@ -15,7 +15,7 @@ window.SITE = {
 
   // --- Tawk.to live chat. Paste your property + widget IDs from
   //     Tawk.to > Administration > Channels > Chat Widget  (looks like  PROPERTY_ID/WIDGET_ID)
-  tawk: { propertyId: "", widgetId: "" },
+  tawk: { propertyId: "6ae04d6db1e4b53471057e3a", widgetId: "1k5u2stqi" },
 
   // --- Projects. type: "product" (our own platform) or "client" (custom builds)
   //     image: path to a screenshot in /assets/projects/ (leave "" for a colour tile)
