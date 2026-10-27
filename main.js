@@ -27,6 +27,8 @@
     if (p.image) {
       var im = new Image();
       im.src = p.image; im.alt = p.title + " screenshot"; im.loading = "lazy";
+      img.style.background = p.imageBg || "#0b0a0e";
+      img.classList.add("card__img--shot");
       img.appendChild(im);
     } else {
       img.appendChild(el("span", "card__ph", initials(p.title, p.mark)));

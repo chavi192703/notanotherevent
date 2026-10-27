@@ -266,3 +266,8 @@ input[type=range]:focus{box-shadow:none}
   .card:hover{transform:none;box-shadow:none}.card:hover .card__img img{transform:none}
 }
 .section,#top{scroll-margin-top:84px}
+
+/* project screenshots: show the whole picture, never crop it */
+.card__img{aspect-ratio:16/9}
+.card__img--shot img{object-fit:contain;object-position:center}
+.card:hover .card__img--shot img{transform:scale(1.04)}
