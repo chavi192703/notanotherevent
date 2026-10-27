@@ -17,6 +17,9 @@ Edit `site-data.js` (projects, testimonials, social links, chat IDs). Push to Gi
 - Project screenshots: `/assets/projects/name.png`, then set `image`.
 - Real numbers in the stats strip: set `data-count` in `index.html` (section stays hidden while all are 0).
 
+## Project screenshots
+Save images in `assets/projects/` (e.g. `10titles.png`, 16:11 ratio works best) and set `image: "/assets/projects/10titles.png"` in `site-data.js`.
+
 ## Live chat (free)
 Create an account at tawk.to, copy the property and widget IDs into `site-data.js`. Install the Tawk.to app so teammates can reply from their phones.
 

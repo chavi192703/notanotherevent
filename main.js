@@ -11,7 +11,8 @@
     if (text != null) e.textContent = text;
     return e;
   }
-  function initials(name) {
+  function initials(name, mark) {
+    if (mark) return mark;
     return (name || "?").split(/\s+/).map(function (w) { return w[0]; }).slice(0, 2).join("").toUpperCase();
   }
 
@@ -28,7 +29,7 @@
       im.src = p.image; im.alt = p.title + " screenshot"; im.loading = "lazy";
       img.appendChild(im);
     } else {
-      img.appendChild(el("span", "card__ph", initials(p.title)));
+      img.appendChild(el("span", "card__ph", initials(p.title, p.mark)));
     }
     var body = el("div", "card__body");
     body.appendChild(el("span", "tag", p.tag || ""));
@@ -61,7 +62,7 @@
     $("#mText").textContent = p.details || p.summary || "";
     var mi = $("#mImg"); mi.innerHTML = ""; mi.style.background = p.color || "#BFA6F6";
     if (p.image) { var im = new Image(); im.src = p.image; im.alt = p.title; mi.appendChild(im); }
-    else mi.appendChild(el("span", "card__ph", initials(p.title)));
+    else mi.appendChild(el("span", "card__ph", initials(p.title, p.mark)));
     var f = $("#mFeat"); f.innerHTML = "";
     (p.features || []).forEach(function (t) { f.appendChild(el("li", null, t)); });
     var l = $("#mLink");
@@ -123,30 +124,52 @@
     document.head.appendChild(s);
   }
 
-  /* ---------- budget slider ---------- */
+  /* ---------- phone country codes ---------- */
+  function flag(iso) {
+    if (iso.length !== 2 || iso === "XK") return "";
+    return String.fromCodePoint(0x1F1E6 + iso.charCodeAt(0) - 65, 0x1F1E6 + iso.charCodeAt(1) - 65) + " ";
+  }
+  var dial = $("#dial"), region = "US";
+  try { var mm = (navigator.language || "en-US").match(/-([A-Za-z]{2})$/); if (mm) region = mm[1].toUpperCase(); } catch (e) {}
+  (window.COUNTRIES || []).forEach(function (c) {
+    var o = document.createElement("option");
+    o.value = c.dial; o.dataset.iso = c.iso;
+    o.textContent = flag(c.iso) + "+" + c.dial + "  " + c.name;
+    o.dataset.short = flag(c.iso) + "+" + c.dial;
+    if (c.iso === region) o.selected = true;
+    dial.appendChild(o);
+  });
+  // closed select shows just flag + code; the open list shows country names
+  function shortLabel() { $$("option", dial).forEach(function (o) { o.textContent = o.selected && document.activeElement !== dial ? o.dataset.short : o.dataset.short + "  " + o.dataset.name; }); }
+  $$("option", dial).forEach(function (o) { o.dataset.name = o.textContent.replace(/^.*?\+\d+\s+/, ""); });
+  dial.addEventListener("focus", shortLabel); dial.addEventListener("blur", shortLabel); dial.addEventListener("change", function () { dial.blur(); });
+  shortLabel();
+
+  /* ---------- budget (USD): slider + manual amount ---------- */
   var USD = [0, 250, 500, 750, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 7500, 10000, 12500, 15000, 17500, 20000, 25000, 30000, 50000];
-  var RATE = { USD: 1, LKR: 300 };
-  var SYM = { USD: "$", LKR: "Rs " };
-  var cur = "USD";
-  var range = $("#budget"), out = $("#budgetOut");
-  function fmt(v) { return SYM[cur] + Math.round(v * RATE[cur]).toLocaleString("en-US"); }
-  function paintBudget() {
-    var i = +range.value, last = i === USD.length - 1;
-    out.textContent = fmt(USD[i]) + (last ? "+" : "");
-    $("#bMin").textContent = fmt(0);
-    $("#bMax").textContent = fmt(USD[USD.length - 1]) + "+";
-    var pct = (i / (USD.length - 1)) * 100;
+  var range = $("#budget"), amt = $("#budgetInput");
+  range.max = USD.length - 1;
+  function paintRange() {
+    var pct = (+range.value / (USD.length - 1)) * 100;
     range.style.background = "linear-gradient(90deg,#6F32C5 " + pct + "%,rgba(23,16,24,.15) " + pct + "%) center/100% 6px no-repeat";
   }
-  range.max = USD.length - 1; range.value = 4;
-  range.addEventListener("input", paintBudget);
-  $$(".seg button").forEach(function (b) {
-    b.addEventListener("click", function () {
-      $$(".seg button").forEach(function (x) { x.classList.remove("is-on"); });
-      b.classList.add("is-on"); cur = b.dataset.cur; paintBudget();
-    });
+  function parseAmt() { var n = parseInt(String(amt.value).replace(/[^0-9]/g, ""), 10); return isNaN(n) ? null : n; }
+  function nearest(v) {
+    var best = 0;
+    USD.forEach(function (x, i) { if (Math.abs(x - v) < Math.abs(USD[best] - v)) best = i; });
+    return best;
+  }
+  range.addEventListener("input", function () {
+    amt.value = USD[+range.value].toLocaleString("en-US") + (+range.value === USD.length - 1 ? "+" : "");
+    paintRange();
   });
-  paintBudget();
+  amt.addEventListener("input", function () {
+    var n = parseAmt();
+    amt.value = n == null ? "" : n.toLocaleString("en-US");
+    if (n != null) range.value = nearest(n);
+    paintRange();
+  });
+  range.value = 5; amt.value = USD[5].toLocaleString("en-US"); paintRange();
 
   /* ---------- form ---------- */
   var form = $("#form"), msg = $("#formMsg"), btn = $("#submit");
@@ -160,15 +183,16 @@
     if (!f.message.value.trim()) { f.message.classList.add("err"); bad = true; }
     if (bad) { say("Please fill in your name, a valid email and a short message.", false); return; }
 
-    var i = +range.value;
+    var n = parseAmt();
+    var budget = f.budgetFlexible.checked ? "Flexible, wants advice" : (n == null ? "Not specified" : "$" + n.toLocaleString("en-US") + " USD" + (/\+$/.test(amt.value) ? "+" : ""));
+    var digits = f.phone.value.replace(/[^\d]/g, "");
     var payload = {
       name: f.name.value.trim(),
       email: f.email.value.trim(),
       company: f.company.value.trim(),
-      phone: f.phone.value.trim(),
+      phone: digits ? "+" + dial.value + " " + f.phone.value.trim() : "",
       needs: $$('input[name="needs"]:checked').map(function (c) { return c.value; }),
-      budget: f.budgetFlexible.checked ? "Flexible, wants advice" : fmt(USD[i]) + (i === USD.length - 1 ? "+" : ""),
-      currency: cur,
+      budget: budget,
       timeline: f.timeline.value,
       message: f.message.value.trim(),
       website: f.website.value
@@ -179,12 +203,39 @@
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (res) {
         if (!res.ok) throw new Error(res.j.error || "fail");
-        form.reset(); range.value = 4; paintBudget();
+        form.reset(); range.value = 5; amt.value = USD[5].toLocaleString("en-US"); paintRange();
         say("Thanks! We got it and sent a confirmation to your email. We'll be in touch soon.", true);
       })
       .catch(function () { say("Something went wrong sending that. Please try again in a moment.", false); })
       .then(function () { btn.disabled = false; btn.textContent = "Send it over"; });
   });
+
+  /* ---------- Natey's eyes follow the pointer ---------- */
+  (function () {
+    var eyes = $$(".eye");
+    if (!eyes.length) return;
+    var rest = { x: 0.3, y: -0.3 }, target = null, state = eyes.map(function () { return { x: rest.x, y: rest.y }; });
+    function point(e) { var t = e.touches && e.touches[0] ? e.touches[0] : e; target = { x: t.clientX, y: t.clientY }; }
+    window.addEventListener("pointermove", point, { passive: true });
+    window.addEventListener("touchmove", point, { passive: true });
+    document.addEventListener("mouseleave", function () { target = null; });
+    function tick() {
+      eyes.forEach(function (eye, i) {
+        var r = eye.getBoundingClientRect(), p = eye.firstElementChild;
+        var goal = rest;
+        if (target) {
+          var dx = target.x - (r.left + r.width / 2), dy = target.y - (r.top + r.height / 2);
+          var d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / (r.width * 1.2));
+          goal = { x: (dx / d) * k, y: (dy / d) * k };
+        }
+        var s = state[i]; s.x += (goal.x - s.x) * 0.2; s.y += (goal.y - s.y) * 0.2;
+        var max = r.width * 0.2;   // how far the pupil may travel from centre
+        p.style.transform = "translate(" + (s.x * max).toFixed(1) + "px," + (s.y * max).toFixed(1) + "px)";
+      });
+      requestAnimationFrame(tick);
+    }
+    tick();
+  })();
 
   /* ---------- nav shadow ---------- */
   var nav = $("#nav");
@@ -217,7 +268,7 @@
   gsap.timeline({ defaults: { ease: "power4.out" } })
     .to(".hero__title .line > span", { yPercent: 0, duration: 1.1, stagger: 0.12, delay: 0.15 })
     .to(".hero .reveal", { opacity: 1, y: 0, duration: 0.8, stagger: 0.12 }, "-=0.7")
-    .from(".hero__logo", { scale: 0.7, rotate: -8, opacity: 0, duration: 1.1, ease: "elastic.out(1,.6)" }, "-=1");
+    .from(".mascot__frame", { scale: 0.8, rotate: -6, opacity: 0, duration: 1.1, ease: "elastic.out(1,.6)" }, "-=1");
 
   // scroll reveals (everything not already in the hero)
   $$(".reveal").forEach(function (n) {

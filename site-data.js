@@ -5,9 +5,9 @@
 window.SITE = {
   // --- Social links (replace with your real URLs; empty string hides the link)
   socials: {
-    instagram: "https://instagram.com/notanotherevent",
-    linkedin: "https://linkedin.com/company/notanotherevent",
-    facebook: "https://facebook.com/notanotherevent",
+    linkedin: "https://www.linkedin.com/company/notanotherevent/",
+    instagram: "https://www.instagram.com/not_another_event/",
+    facebook: "",
     tiktok: "",
     x: "",
     youtube: ""
@@ -21,29 +21,32 @@ window.SITE = {
   //     image: path to a screenshot in /assets/projects/ (leave "" for a colour tile)
   projects: [
     {
-      title: "Project name one",
+      title: "The 10 Titles",
+      mark: "10",
       type: "client",
-      tag: "Wedding planning system",
+      tag: "Voting for Dynasty '26",
       color: "#BFA6F6",
       image: "",
-      summary: "One line on what you built and who it was for.",
-      details: "A longer description: the problem, what you built, and the result. Add numbers if you have them (guests managed, hours saved, events run).",
-      features: ["Guest lists", "Seating plans", "Payments"],
-      link: ""
+      summary: "Online voting for a Desi-themed gala: ten titles, one crown each.",
+      details: "A mobile-friendly voting experience for the Dynasty '26 gala. Guests pick the winners across ten titles, one crown per title, and votes are submitted instantly.",
+      features: ["Ten titles", "One crown each", "Mobile friendly", "Instant vote submission"],
+      link: "https://10titles.notanotherevent.com"
     },
     {
-      title: "Project name two",
+      title: "Dynasty Seating",
+      mark: "DS",
       type: "client",
-      tag: "Corporate event portal",
+      tag: "Seating plans for Dynasty '26",
       color: "#FFD44D",
       image: "",
-      summary: "One line on what you built and who it was for.",
-      details: "A longer description of this project.",
-      features: ["Registration", "Check-in", "Reports"],
-      link: ""
+      summary: "Seating for the Dynasty '26 gala.",
+      details: "",
+      features: ["Seating plans", "Guest lists"],
+      link: "https://dynastyseating.notanotherevent.com"
     },
     {
       title: "Not Another Event app",
+      mark: "NA",
       type: "product",
       tag: "Our event platform",
       color: "#FFB6DC",
@@ -54,6 +57,7 @@ window.SITE = {
       link: ""
     }
   ],
+
 
   // --- Testimonials. Replace the placeholders with REAL client quotes.
   testimonials: [
