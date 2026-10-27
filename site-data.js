@@ -26,10 +26,10 @@ window.SITE = {
       type: "client",
       tag: "Voting for Dynasty '26",
       color: "#BFA6F6",
-      image: "",
-      summary: "Online voting for a Desi-themed gala: ten titles, one crown each.",
-      details: "A mobile-friendly voting experience for the Dynasty '26 gala. Guests pick the winners across ten titles, one crown per title, and votes are submitted instantly.",
-      features: ["Ten titles", "One crown each", "Mobile friendly", "Instant vote submission"],
+      image: "/assets/projects/10titles.jpg",
+      summary: "Live voting for a Desi-themed gala: ten titles, one crown each, with a big-screen reveal.",
+      details: "A mobile-friendly voting experience for the Dynasty '26 gala. Guests scan a QR code and pick winners across ten titles, one crown per title. On the night, a presenter screen shows live results and runs a dramatic reveal of each winner, with optional 2nd and 3rd places, vote counts and sound.",
+      features: ["QR code voting", "Ten titles", "Live results", "Winner reveal screen", "Mobile friendly"],
       link: "https://10titles.notanotherevent.com"
     },
     {
@@ -38,10 +38,10 @@ window.SITE = {
       type: "client",
       tag: "Seating plans for Dynasty '26",
       color: "#FFD44D",
-      image: "",
-      summary: "Seating for the Dynasty '26 gala.",
-      details: "",
-      features: ["Seating plans", "Guest lists"],
+      image: "/assets/projects/dynastyseating.jpg",
+      summary: "Guests type their name and instantly see which table they're on.",
+      details: "A live seating lookup for the Dynasty '26 gala. Guests search their name to find their table, and organisers see all 18 tables, 172 guests, free seats and student and teacher filters at a glance.",
+      features: ["Name search", "18 tables", "172 guests seated", "Free-seat tracking", "Student and teacher filters"],
       link: "https://dynastyseating.notanotherevent.com"
     },
     {

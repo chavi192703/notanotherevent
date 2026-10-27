@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Not Another Event | Event planning software that makes events simpler and more fun</title>
   <meta name="description" content="Not Another Event builds event planning software and custom event systems: guest lists, payments, seating plans and DJ requests in one place. See our work and tell us your budget.">
   <link rel="canonical" href="https://notanotherevent.com/">
@@ -94,13 +94,14 @@
     <a href="#top" class="nav__logo" aria-label="Not Another Event home">
       <img src="/assets/logo.png" alt="Not Another Event" width="120" height="69">
     </a>
-    <nav class="nav__links" aria-label="Main">
+    <nav class="nav__links" id="menu" aria-label="Main">
       <a href="#work">Work</a>
       <a href="#services">What we do</a>
       <a href="#love">Kind words</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <a href="#contact" class="btn btn--small magnetic">Let's talk</a>
+    <a href="#contact" class="btn btn--small magnetic nav__cta">Let's talk</a>
+    <button class="nav__burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
   </header>
 
   <main id="main">
